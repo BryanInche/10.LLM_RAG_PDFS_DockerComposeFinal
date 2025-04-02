@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  ollama:
+    image: ollama/ollama:latest   # ¡Imagen oficial 
+    ports:
+      - "11435:11434"  # Ahora Ollama en Docker estará en el puerto 11435 del host.
+    volumes:
+      - ollama_data:/root/.ollama  # Persistencia de modelos descargados
+    command: ["serve"]  # Comando directo sin shell
+    environment:
+      - OLLAMA_HOST=0.0.0.0  # Acepta conexiones externas
+    restart: unless-stopped
+
+  backend:
+    build:  
+      context: . # ¡Ahora apunta al directorio actual (donde está el Dockerfile)!
+      dockerfile: Dockerfile.backend  # Especifica el nombre exacto
+    ports:
+      - "8000:8000"
+    environment:
+      - OLLAMA_HOST=http://ollama:11434  # ¡Importante! Usa el puerto INTERNO del contenedor (11434), no el del host (11435).
+    depends_on:
+      - ollama
+    restart: unless-stopped
+
+  frontend:
+    build: 
+      context: ./llm-chatbot-frontend-bryan  # Ruta al Dockerfile del frontend
+      dockerfile: Dockerfile.frontend  # Especifica el nombre exacto
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  ollama_data:

@@ -1,0 +1,30 @@
+FROM continuumio/miniconda3:24.1.2-0
+
+WORKDIR /app
+
+# 1. Instalar Mamba y limpiar Instala Mamba para instalaciones más rápidas
+RUN conda install -n base -c conda-forge mamba && \
+    conda clean -afy
+
+# 2. Copiar environment.yml primero para mejor caché
+COPY environment.yml .
+
+# 3. Crear el entorno con Mamba, Instala el entorno con Mamba
+#Instala TODAS las dependencias listadas en tu environment.yml
+RUN mamba env create -f environment.yml && \
+    mamba clean -afy
+
+# 4. Configura el shell para usar el entorno automáticamente
+#SHELL ["conda", "run", "-n", "llm-ms4m", "/bin/bash", "-c"]
+
+# 5. Copiar el código fuente,Solo copia tu código fuente al contenedor
+COPY . .
+
+# 6. Instalar el paquete en modo editable (solución clave)
+#Solo es necesaria si quieres instalar tu propio código como paquete editable
+#RUN pip install --no-cache-dir -e .
+#RUN pip install --no-cache-dir .
+
+# 5. Cambiar el CMD para activar el entorno Conda primero
+CMD ["conda", "run", "--no-capture-output", "-n", "llm-ms4m", "uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]
+#CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]

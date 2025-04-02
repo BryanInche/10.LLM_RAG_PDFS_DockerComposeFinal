@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "llm-chatbot-local" #nombre de tu proyecto
+version = "0.1.0"    #versión actual de tu proyecto
+description = "chatbot llm ms4m"
+authors = ["BryanInche"]
+readme = "README.md"
+package-mode = false  # puedes deshabilitar el modo de paquete
+
+
+#Dependencias de tu proyecto. Poetry se encargará de instalarlas y gestionar sus versiones
+[tool.poetry.dependencies]
+python = ">=3.9, <3.14"
+langchain = "^0.3.0"
+langchain-community = "^0.3.0"
+PyMuPDF = "^1.25.3"
+chromadb = "^0.6.3"
+fastembed = "^0.5.1"
+fastapi = "^0.115.8"
+uvicorn = "^0.34.0"
+transformers = "^4.49.0"
+langchain-huggingface = "^0.1.2"
+
+#Define cómo se debe construir tu proyecto
+[build-system]
+requires = ["poetry-core"]
+build-backed = "poetry.core.masonry.api"
+
+
